@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Radiant Diary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Radiant Diary</p>
+        <h1>Capture the essentials</h1>
+      </div>
+      <button id="clear-entries" class="ghost">Clear all</button>
+    </header>
+
+    <main class="layout">
+      <section class="card">
+        <h2>New entry</h2>
+        <form id="entry-form" class="stack" autocomplete="off">
+          <label class="field">
+            <span>Title</span>
+            <input id="entry-title" name="title" type="text" maxlength="80" placeholder="Today in a sentence" required />
+          </label>
+          <label class="field">
+            <span>Notes</span>
+            <textarea id="entry-content" name="content" rows="4" placeholder="Write what matters" required></textarea>
+          </label>
+          <button class="primary" type="submit">Save entry</button>
+        </form>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <p class="eyebrow">Entries</p>
+            <h2>Timeline</h2>
+          </div>
+          <p id="empty-state" class="hint">No entries yet</p>
+        </div>
+        <div id="entry-list" class="entries"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
