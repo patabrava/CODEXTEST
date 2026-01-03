@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Radiant Diary</title>
+  <title>Freelance Time Tracker</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap" rel="stylesheet" />
@@ -13,40 +13,153 @@
   <div class="app-shell">
     <header class="topbar">
       <div>
-        <p class="eyebrow">Radiant Diary</p>
-        <h1>Capture the essentials</h1>
+        <p class="eyebrow">Freelance Time Tracker</p>
+        <h1>Track every billable minute with confidence.</h1>
       </div>
-      <button id="clear-entries" class="ghost">Clear all</button>
+      <div class="topbar-actions">
+        <button id="export-csv" class="ghost">Export CSV</button>
+        <button id="clear-data" class="ghost danger">Clear all</button>
+      </div>
     </header>
 
     <main class="layout">
-      <section class="card">
-        <h2>New entry</h2>
-        <form id="entry-form" class="stack" autocomplete="off">
+      <section class="card stack">
+        <div>
+          <p class="eyebrow">Projects</p>
+          <h2>Your active projects</h2>
+        </div>
+        <form id="project-form" class="stack" autocomplete="off">
           <label class="field">
-            <span>Title</span>
-            <input id="entry-title" name="title" type="text" maxlength="80" placeholder="Today in a sentence" required />
+            <span>Project name</span>
+            <input name="projectName" type="text" maxlength="60" placeholder="Client website redesign" required />
+          </label>
+          <label class="field">
+            <span>Client</span>
+            <input name="clientName" type="text" maxlength="60" placeholder="Acme Co." />
+          </label>
+          <label class="field">
+            <span>Hourly rate (USD)</span>
+            <input name="rate" type="number" min="0" step="0.01" placeholder="120" />
+          </label>
+          <button class="primary" type="submit">Add project</button>
+        </form>
+        <div id="project-list" class="list"></div>
+      </section>
+
+      <section class="card stack">
+        <div>
+          <p class="eyebrow">Timer</p>
+          <h2>Stay focused on the work in front of you</h2>
+        </div>
+        <div class="timer">
+          <div>
+            <p class="eyebrow subtle">Active project</p>
+            <h3 id="active-project">No timer running</h3>
+          </div>
+          <div class="timer-display" id="timer-display">00:00:00</div>
+          <p class="hint" id="timer-hint">Start a timer from a project below.</p>
+          <div class="timer-actions">
+            <button id="stop-timer" class="ghost" disabled>Stop timer</button>
+            <button id="add-note" class="ghost" disabled>Add note</button>
+          </div>
+        </div>
+        <form id="manual-entry-form" class="stack" autocomplete="off">
+          <h3>Manual time entry</h3>
+          <label class="field">
+            <span>Project</span>
+            <select name="manualProject" required></select>
+          </label>
+          <label class="field">
+            <span>Start</span>
+            <input name="manualStart" type="datetime-local" required />
+          </label>
+          <label class="field">
+            <span>End</span>
+            <input name="manualEnd" type="datetime-local" required />
           </label>
           <label class="field">
             <span>Notes</span>
-            <textarea id="entry-content" name="content" rows="4" placeholder="Write what matters" required></textarea>
+            <textarea name="manualNotes" rows="3" placeholder="Meeting notes, deliverables, context"></textarea>
+          </label>
+          <label class="field checkbox">
+            <input name="manualBillable" type="checkbox" checked />
+            <span>Billable</span>
           </label>
           <button class="primary" type="submit">Save entry</button>
         </form>
       </section>
 
-      <section class="card">
+      <section class="card stack">
+        <div>
+          <p class="eyebrow">Insights</p>
+          <h2>Know your week at a glance</h2>
+        </div>
+        <div class="summary-grid">
+          <article class="summary-card">
+            <p class="eyebrow subtle">Today</p>
+            <h3 id="summary-today">0h 0m</h3>
+            <p class="hint" id="summary-today-billable">$0.00 billable</p>
+          </article>
+          <article class="summary-card">
+            <p class="eyebrow subtle">This week</p>
+            <h3 id="summary-week">0h 0m</h3>
+            <p class="hint" id="summary-week-billable">$0.00 billable</p>
+          </article>
+          <article class="summary-card">
+            <p class="eyebrow subtle">This month</p>
+            <h3 id="summary-month">0h 0m</h3>
+            <p class="hint" id="summary-month-billable">$0.00 billable</p>
+          </article>
+        </div>
         <div class="card-header">
           <div>
             <p class="eyebrow">Entries</p>
-            <h2>Timeline</h2>
+            <h2>Recent time logs</h2>
           </div>
-          <p id="empty-state" class="hint">No entries yet</p>
+          <div class="filters">
+            <label class="field compact">
+              <span class="sr-only">Filter project</span>
+              <select id="filter-project"></select>
+            </label>
+            <label class="field compact">
+              <span class="sr-only">Filter range</span>
+              <select id="filter-range">
+                <option value="30">Last 30 days</option>
+                <option value="7">Last 7 days</option>
+                <option value="1">Today</option>
+                <option value="365">Last year</option>
+              </select>
+            </label>
+          </div>
         </div>
-        <div id="entry-list" class="entries"></div>
+        <div class="table" id="entries-table">
+          <div class="table-header">
+            <span>Date</span>
+            <span>Project</span>
+            <span>Duration</span>
+            <span>Billable</span>
+            <span>Notes</span>
+          </div>
+          <div id="entry-list" class="table-body"></div>
+          <p id="empty-state" class="hint">No entries yet.</p>
+        </div>
       </section>
     </main>
   </div>
+
+  <dialog id="note-dialog" class="note-dialog">
+    <form method="dialog" class="stack" id="note-form">
+      <h3>Add notes to the active timer</h3>
+      <label class="field">
+        <span>Notes</span>
+        <textarea name="noteContent" rows="4" placeholder="Deliverables, blockers, or context"></textarea>
+      </label>
+      <menu class="dialog-actions">
+        <button class="ghost" value="cancel">Cancel</button>
+        <button class="primary" value="confirm">Save notes</button>
+      </menu>
+    </form>
+  </dialog>
 
   <script src="app.js"></script>
 </body>
